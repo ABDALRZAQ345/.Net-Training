@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using WebApplication2;
 using WebApplication2.Controllers;
 using WebApplication2.Database;
@@ -9,7 +10,10 @@ var config = builder.Configuration;
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<MovieRepository>();
- builder.Services.AddDatabase(config["Database:ConnectionString"]!);
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), 
+        new MySqlServerVersion(new Version(8, 0, 23))));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,6 +36,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-var dbinit = app.Services.GetRequiredService<DbInitializer>();
-await dbinit.InitializeAsync();
+
 app.Run();

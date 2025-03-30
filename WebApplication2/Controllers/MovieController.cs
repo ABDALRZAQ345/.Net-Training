@@ -23,7 +23,7 @@ public class MovieController : ControllerBase
     [HttpGet(Api.Movies.GetAll)]
     public  async Task<IActionResult>  Index()
     {
-        
+      
        var movies =await _movieRepository.GetAllAsync();
         
             return Ok(movies);
