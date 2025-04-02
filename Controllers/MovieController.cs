@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication2.ApiEndPoints;
 using WebApplication2.Mapping;
@@ -12,12 +13,13 @@ namespace WebApplication2.Controllers;
 
 public class MovieController : ControllerBase
 {
-    private readonly MovieRepository _movieRepository;
     private readonly MovieService _movieService;
-    public MovieController(MovieRepository movieRepository, MovieService movieService)
+    private readonly IValidator<Movie> _movieValidator;
+    public MovieController(MovieService movieService, IValidator<Movie> movieValidator)
     {
-        _movieRepository = movieRepository;
+        
         _movieService = movieService;
+        _movieValidator = movieValidator;
     }
 
    
@@ -45,6 +47,7 @@ public class MovieController : ControllerBase
     {
        
        var movie = request.MapToMovie(id);
+       await _movieValidator.ValidateAndThrowAsync(movie);
        var updatedMovie =await _movieService.UpdateAsync(movie);
        if(updatedMovie != null)
            return NotFound();
@@ -55,6 +58,7 @@ public class MovieController : ControllerBase
     public async Task<IActionResult> Create([FromBody]CreateMovieRequest request)
     {
         var movie = request.MapToMovie();
+        await _movieValidator.ValidateAndThrowAsync(movie);
        await _movieService.CreateAsync(movie);
        return Created(Api.Movies.Create+"/"+movie.Id, movie);
     }

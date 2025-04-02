@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApplication2;
 using WebApplication2.Controllers;
 using WebApplication2.Database;
+using WebApplication2.Mapping;
 using WebApplication2.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,7 +34,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-
+app.UseMiddleware<ValidationMappingMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

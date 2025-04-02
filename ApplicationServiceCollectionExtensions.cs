@@ -1,4 +1,5 @@
-﻿using WebApplication2.Database;
+﻿using FluentValidation;
+using WebApplication2.Database;
 using WebApplication2.Repositories;
 using WebApplication2.Services;
 
@@ -11,6 +12,7 @@ public static class ApplicationServiceCollectionExtensions
     {
         services.AddScoped<MovieRepository>();
       services.AddScoped<MovieService>();
+      services.AddValidatorsFromAssemblyContaining<IApplicationMarker>(ServiceLifetime.Singleton);
                    return services;
     }
 
